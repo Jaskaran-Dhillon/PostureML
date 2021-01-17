@@ -13,7 +13,9 @@ function Navbar() {
 
       
        <Link to = '/'className = 'navbar-logo'>
-       PostureML 
+       Posture
+      <span className = "tt">  
+         ML  </span>
        </Link>
         <Link to = './' className = 'navbar-info'>
          Home

@@ -197,7 +197,7 @@ else if (posture.PostureState=="bad" && data.predictions[0].tagName=="Good Postu
             (posture.Session == "Start") ? "Stop" : "Start"
         } </Button>
         <div />
-        <h7> Below is a breakdown of your posture during this session</h7>
+        <h3> Below is a breakdown of your posture during this session</h3>
         <LineChart  
         HeadOH={posture.ArmRest}
         headTilt={posture.HeadTilt}
