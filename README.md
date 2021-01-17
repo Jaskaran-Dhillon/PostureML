@@ -1,23 +1,21 @@
-# Getting Started with Create React App
+# PostureML- HTN 2021 Submission
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## What it does
+PostureML uses machine learning to determine the type of posture that the user is in. It sends reminders to the user whenever it detects that the user is in a malicious posture and reminds them of their posture, and how to fix it. The user will be able to choose the type of reminder and their interface. Finally, there will be another section to the website, where the user can view their statistics on a graph, knowing which malicious postures they have done the most.
 
-## Available Scripts
+## How we built it
 
-In the project directory, you can run:
+We used React to build the frontend of the website, and used Javascript to build the backend of the project. For machine learning, we used the Microsoft Azure API.
 
-### `npm start`
+## Next Steps
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+PostureML has room for technical improvements. This includes additional classifications for different kinds of malicious posture, and even pre-detecting medical conditions such as scoliosis and lumbar lordosis. Additional classifications for the user to fix their posture, as well as additional functionalities such as recommending to see a physician would be integrated into future versions of PostureML.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Devpost Link
 
-### `npm test`
+[Devpost](https://devpost.com/software/postureai)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+[Youtube Demo](https://www.youtube.com/watch?v=k6_UwN_msMU)
 
 ### `npm run build`
 
