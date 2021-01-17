@@ -1,0 +1,26 @@
+.submit_login{
+  position: relative;
+  
+}
+.logo_login{
+  position: relative;
+  font-size: 100px;
+  bottom: 100px;
+}
+.password_login{
+  position: relative;
+  bottom: 40px;
+  right: 150px;
+  width: 300px;
+}
+
+.username_login{
+ position: relative;
+ bottom: 120px;
+ left: 150px;
+ width: 300px;
+}
+.ml{
+  color: rgb(0, 119, 255);
+  size: 100px;
+}

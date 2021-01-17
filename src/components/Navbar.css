@@ -1,0 +1,34 @@
+.navbar-logo{
+    position: absolute;
+    color: aliceblue;
+    outline: none;
+    text-decoration: none;
+    top: 2%;
+    left: 15px;
+    
+  
+}
+.navbar-info{
+    position: absolute;
+    color: aliceblue;
+    text-decoration: none;
+     outline: none;
+    top: 2%;
+    left: 40%;
+}
+.navbar-begin{
+    position: absolute;
+    color: aliceblue;
+    text-decoration: none;
+     outline: none;
+    top: 2%;
+    left: 50%;
+}
+.navbar-graph{
+    position: absolute;   
+    color: aliceblue;
+    text-decoration: none;
+     outline: none;
+    top: 2%;
+    left: 60%;
+}
