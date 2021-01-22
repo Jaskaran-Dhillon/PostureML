@@ -15,4 +15,4 @@ PostureML has room for technical improvements. This includes additional classifi
 
 [Devpost](https://devpost.com/software/postureai)
 
-[Website Link](www.postureml.tech)
+[Website Link](https://postureml.herokuapp.com/)
