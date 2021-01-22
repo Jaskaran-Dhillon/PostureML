@@ -8,16 +8,13 @@ function Navbar() {
     return ( 
         <>
      <nav className = "navbar" >
-  
-       <div className = "navbar-container" >
-
-      
-       <Link to = '/'className = 'navbar-logo'>
+     <div className = "navbar-container" >
+      <Link to = '/'className = 'navbar-logo'>
        Posture
       <span className = "tt">  
-         ML  </span>
+       ML  </span>
        </Link>
-        <Link to = './' className = 'navbar-info'>
+      <Link to = './' className = 'navbar-info'>
          Home
       </Link>
       <Link to = 'app' className = 'navbar-begin'>
@@ -27,18 +24,9 @@ function Navbar() {
       <Link to = 'graph' className = 'navbar-graph'>
          Graph
       </Link>
-        
-      
-
-       </div>
-       </nav>
-       
-
-       </>
-     
-
-    )
-
-
- }
+      </div>
+      </nav>
+        </>
+   )
+}
  export default Navbar
