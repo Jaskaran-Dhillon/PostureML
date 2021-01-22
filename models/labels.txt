@@ -1,5 +1,0 @@
-back
-front
-good
-handonhead
-headtilt
