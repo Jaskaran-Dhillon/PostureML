@@ -23,6 +23,10 @@ function Navbar() {
       <Link to = 'app' className = 'navbar-begin'>
          Application
       </Link>
+      <div />
+      <Link to = 'graph' className = 'navbar-graph'>
+         Graph
+      </Link>
         
       
 

@@ -22,7 +22,15 @@
     text-decoration: none;
     outline: none;
     top: 2%;
-    left: 52%;
+    left: 48%;
+}
+.navbar-graph {
+    position: absolute;
+    color: aliceblue;
+    text-decoration: none;
+    outline: none;
+    top: 2%;
+    left: 58%;
 }
 
 .tt {

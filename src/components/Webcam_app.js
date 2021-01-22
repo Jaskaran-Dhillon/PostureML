@@ -1,19 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext,useState } from "react";
 import Webcam from 'react-webcam'
 import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert';
-import { light } from "@material-ui/core/styles/createPalette";
 import Grow from '@material-ui/core/Grow';
 import './Webcam_app.css';
-import LineChart from "./LineChart";
+import {Context} from "./Store";
+var apiurl= "[Your API url here]";
+var apikey="[Your API key here]";
 
-var apiurl= 'https://bikinibottom.cognitiveservices.azure.com/customvision/v3.0/Prediction/6d6530cc-1cd7-49da-aa4c-75153bea8702/detect/iterations/Iteration4/image'
-
-const videoConstraints = {
+const videoConstraints = { //image size displayed on page
     width: 720,
     height: 480,
     aspectRatio: 1
 };
+
+function dataURLtoFile(dataurl, filename) { //Necessary to convert base64 encoded string image to proper image file for Microsoft Azure
+  var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+  bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+  while(n--){
+  u8arr[n] = bstr.charCodeAt(n);
+  }
+return new File([u8arr], filename, {type:mime});
+}
 
 async function postData(url = '', data = {}) {
   // Default options are marked with *
@@ -24,9 +32,8 @@ async function postData(url = '', data = {}) {
     credentials: 'same-origin', // include, *same-origin, omit
     headers: {
       'Content-Type': 'application/octet-stream',
-     "Prediction-Key":'a3f4332e17394dffaf66e787ff2a4a70'
-     
-    },
+      "Prediction-Key": apikey
+     },
     redirect: 'follow', // manual, *follow, error
     referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: data
@@ -34,22 +41,20 @@ async function postData(url = '', data = {}) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-
 function Webcam_app() {
-    const webcamRef = React.useRef(null);
+  //Refs to make sure the webcam and imgsrc do not provide null
+    const [state,dispatch]=useContext(Context);
+    const webcamRef = React.useRef(null); 
     const imgRef = React.useRef(null);
-    const [imgSrc, setImgSrc] = React.useState(null);
-    const [timerRef, setTimerRef] = React.useState(null);
-
-    const [posture, setPosture] = useState({
+    const [imgSrc, setImgSrc] = React.useState(null); //Holds the image that will be analyzed by Azure
+    const [timerRef, setTimerRef] = React.useState(null); //Holds the 7 seconds main timer
+    const [posture, setPosture] = useState({ //Tracks if current session is active, the posture state, posture issue, and the # of hits for the linechart
       Session: "stop",
       PostureState: "good",
-      Err_msg: "Neck Tilt",
-      HeadTilt: 0,
-      Hunching: 0,
-      Reclined: 0,
-      ArmRest: 0
+      Err_msg: "Neck Tilt" 
   })
+  
+  //Left in case future updates incorporate login
   // const [userSettings, setUserSettings] = useState({
   //     Text_to_speech: false,
   //     AlarmSound: "alarm",
@@ -57,133 +62,98 @@ function Webcam_app() {
   //     IntervalTimer: 1000
   // })
 
-  /////////////////////////////////////////////////////////////////////////////////////  Functions /////////////////////////////////////////////////////////////////
   const capture = React.useCallback(() => {
-    if (webcamRef.current) {
+    if (webcamRef.current) { //Correct way to use refs, must check if it is ready before accessing  
         const imageSrc = webcamRef.current.getScreenshot();
         setImgSrc(imageSrc);
     }
-}, [webcamRef, setImgSrc]);
+},[webcamRef, setImgSrc]);
 
-function dataURLtoFile(dataurl, filename) {
-    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
-    while(n--){
-    u8arr[n] = bstr.charCodeAt(n);
-    }
-  return new File([u8arr], filename, {type:mime});
-  }
-
-  function changeSession() {
+function changeSession() {
     setPosture(prevPosture => {
-      if (timerRef===null){
+      if (timerRef===null){ //If starting...
        let timer =  setInterval(function() {
 
         capture();
-       }, 7000); //should be 1 minute for final product, no user settings
-       setTimerRef(timer)
+       }, 7000); 
+       setTimerRef(timer) //Set the state to a time interval which runs every 7 seconds
       }
       else{
-         clearInterval(timerRef);
-         setTimerRef(null);
+         clearInterval(timerRef); //If stopping session then clear interval and set state to null
+         setTimerRef(null); //This effectively removes the timer
       }
-        return {
-            Session: (posture.Session == "Start") ? "Stop" : "Start",
-            PostureState: prevPosture.PostureState,
-            Err_msg: prevPosture.Err_msg,
-            HeadTilt: prevPosture.HeadTilt,
-            Hunching: prevPosture.Hunching,
-            Reclined: prevPosture.Reclined,
-            ArmRest: prevPosture.ArmRest
+      return {
+            ...prevPosture,
+            Session: (posture.Session === "Start") ? "Stop" : "Start"
+            
         };
     });
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-React.useEffect(() => {
-      if (imgRef.current ) { 
-var fileData = dataURLtoFile(imgSrc, "imageName.jpg");
+React.useEffect(() => { //Whenever the timer hits 7 seconds, a new image will be taken and the following analysis is done
+if (imgRef.current ){ 
+var fileData = dataURLtoFile(imgSrc, "imageName.jpg"); //Image Conversion to file
 
-postData(apiurl, fileData)
+postData(apiurl, fileData) //Post request to Azure
 .then(data => {
-console.log(data.predictions[0].tagName); // JSON data parsed by `data.json()` call
-if (posture.PostureState=="good" && data.predictions[0].tagName!="Good Posture"){
-  switch(data.predictions[0].tagName) {
+console.log(data.predictions[0].tagName); 
+if (posture.PostureState==="good" && data.predictions[0].tagName!=="Good Posture"){
+ 
+  switch(data.predictions[0].tagName) {//Update global state
     case "Head Tilt":
-      localStorage.setItem('Headtilt', posture.HeadTilt + 1 );
+      dispatch({type: "Head Tilt", x:0});
       break;
     case "Hunching":
-      localStorage.setItem('Hunching', posture.Hunching + 1 );
+      dispatch({type:"Hunching",x:0})
       break;
       case "Reclining Back":
-        localStorage.setItem('Reclined', posture.Reclined + 1 );
+        dispatch({type:"Reclining Back",x:0})
       break;
       case "Resting Head on Hand":
-        localStorage.setItem('Armrest', posture.ArmRest + 1 );
+        dispatch({type:"Resting Head on Hand",x:0})
       break;
     default:
       
   } 
- 
-  setPosture(prevPosture => {
+  
+  setPosture(prevPosture => { //Flip the current state
           return {
             Session: prevPosture.Session,
-            PostureState: "bad", //change to bad state
-            Err_msg: data.predictions[0].tagName, //state the issue
-            HeadTilt:(data.predictions[0].tagName=="Head Tilt") ? prevPosture.HeadTilt + 1: prevPosture.HeadTilt,
-            Hunching:(data.predictions[0].tagName=="Hunching") ? prevPosture.Hunching + 1: prevPosture.Hunching,
-            Reclined:(data.predictions[0].tagName=="Reclining Back") ? prevPosture.Reclined + 1: prevPosture.Reclined,
-            ArmRest:(data.predictions[0].tagName=="Resting Head on Hand") ? prevPosture.ArmRest + 1: prevPosture.ArmRest
+            PostureState: "bad", 
+            Err_msg: data.predictions[0].tagName 
           };
            });
            
-  
-  var msg = new SpeechSynthesisUtterance();
+  var msg = new SpeechSynthesisUtterance(); //Text to speech warning
   msg.text = "Please fix your posture";
   window.speechSynthesis.speak(msg);
 
-
-
   setTimeout(()=>{
     capture()
-  }, 2000);
+  }, 2000); //Here we begin a faster timer to allow the user to fix their posture and remove their warning
 }
-else if (posture.PostureState=="bad" && data.predictions[0].tagName=="Good Posture"){
+else if (posture.PostureState==="bad" && data.predictions[0].tagName==="Good Posture"){
 
-  setPosture(prevPosture => {
+  setPosture(prevPosture => {//Flip the current state
           return {
                 Session: prevPosture.Session,
                 PostureState: "good",
-                Err_msg:prevPosture.Err_msg,
-                HeadTilt:prevPosture.HeadTilt,
-                Hunching: prevPosture.Hunching,
-                Reclined: prevPosture.Reclined,
-                ArmRest: prevPosture.ArmRest
-              };
-               });
-}
-// else if (posture.PostureState=="bad" && data.predictions[0].tagName!="Good Posture"){ //remain bad
-//   // setTimeout(()=>{
-//   //   capture()
-//   // }, 8000);
-// }
-
-
-
-
-});     
-
-}
+                Err_msg:prevPosture.Err_msg
+                
+                };
+            });
+           }
+       });     
+     }
 }, [imgSrc])
 
-
-    return (
+return (
     <div >
         <Grow in = {posture.PostureState === "bad"} >
         <Alert variant = "filled"
         severity = "error"
         className = "alert"> 
-        { "Warning! Following bad posture detected: " + posture.Err_msg + ". Please fix immediately :)" } 
+        { "Warning! Following bad posture detected: " + posture.Err_msg + ". Please fix immediately" } 
         </Alert> 
         </Grow>
         <Webcam videoConstraints = {videoConstraints}
@@ -193,23 +163,11 @@ else if (posture.PostureState=="bad" && data.predictions[0].tagName=="Good Postu
         <div />
         <Button variant = "contained"
         color = "primary"
-        onClick = { changeSession } > {
-            (posture.Session == "Start") ? "Stop" : "Start"
-        } </Button>
-        <div />
-        <h3> Below is a breakdown of your posture during this session</h3>
-        <LineChart  
-        HeadOH={posture.ArmRest}
-        headTilt={posture.HeadTilt}
-        back={posture.Reclined}S
-        hunching={posture.Hunching}
-        />
-        {
-            imgSrc &&
-            <img id="image" className="detect" ref={imgRef} src={imgSrc} />
-        }
-        </div >
+        onClick = { changeSession }> 
+        {(posture.Session === "Start") ? "Stop" : "Start"} 
+        </Button>
+        {imgSrc && <img id="image" className="invis" ref={imgRef} src={imgSrc} />}
+      </div >
     )
-
 }
 export default Webcam_app;
