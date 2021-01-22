@@ -11,8 +11,7 @@ function Navbar() {
      <div className = "navbar-container" >
       <Link to = '/'className = 'navbar-logo'>
        Posture
-      <span className = "tt">  
-       ML  </span>
+      <span className = "tt"> ML </span>
        </Link>
       <Link to = './' className = 'navbar-info'>
          Home
