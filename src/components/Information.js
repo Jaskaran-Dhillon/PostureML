@@ -11,11 +11,10 @@ export class Information extends Component {
     </p>
     <div className = "image">
       </div> 
-      <img src="https://i.pinimg.com/originals/e4/26/70/e426702edf874b181aced1e2fa5c6cde.gif"/>
+      <img src="https://i.pinimg.com/originals/e4/26/70/e426702edf874b181aced1e2fa5c6cde.gif" alt=""/>
       <p className="flex-box-home"> In times of pandemic and work from home situations, this is a must-have tool. </p>
       <p className = "powered"> Powered by Azure</p>
     </div>
-  
         );
     }
 }
