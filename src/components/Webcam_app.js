@@ -32,7 +32,8 @@ async function postData(url = '', data = {}) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/octet-stream',
-      "Prediction-Key": apiKey
+      "Prediction-Key": apiKey,
+      'Access-Control-Allow-Origin':'*'
     },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
