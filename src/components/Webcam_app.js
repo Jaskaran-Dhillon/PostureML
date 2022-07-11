@@ -3,12 +3,13 @@ import Webcam from 'react-webcam'
 import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert';
 import Grow from '@material-ui/core/Grow';
-import './Webcam_app.css';
 import { Context } from "./Store";
-var apiurl = "[Your API url here]";
-var apikey = "[Your API key here]";
+import './Webcam_app.css';
 
-const videoConstraints = { //image size displayed on page
+var apiUrl = process.env.REACT_APP_API_URL;
+var apiKey = process.env.REACT_APP_API_KEY;
+
+const videoConstraints = {
   width: 720,
   height: 480,
   aspectRatio: 1
@@ -31,7 +32,7 @@ async function postData(url = '', data = {}) {
     credentials: 'same-origin',
     headers: {
       'Content-Type': 'application/octet-stream',
-      "Prediction-Key": apikey
+      "Prediction-Key": apiKey
     },
     redirect: 'follow',
     referrerPolicy: 'no-referrer',
@@ -89,7 +90,7 @@ function Webcam_app() {
     if (imgRef.current) {
       var fileData = dataURLtoFile(imgSrc, "imageName.jpg");
 
-      postData(apiurl, fileData)
+      postData(apiUrl, fileData)
         .then(data => {
           if (posture.PostureState === "good" && data.predictions[0].tagName !== "Good Posture") {
             dispatch({ type: data.predictions[0].tagName, data: null })
@@ -144,4 +145,5 @@ function Webcam_app() {
     </div >
   )
 }
+
 export default Webcam_app;
