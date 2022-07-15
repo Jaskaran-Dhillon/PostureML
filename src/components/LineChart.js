@@ -26,14 +26,9 @@ function LineChart() {
           chartArea: { width: '30%' },
           backgroundColor: 'transparent',
           hAxis: {
-            title: '# of Warnings',
             color: '#FFF', 
             minValue: 0,
             textStyle: { color: '#FFF' },
-          },
-          vAxis: {
-            title: 'Poor Posture State',
-            textStyle: { color: '#FFF' }, 
           },
           legend: { textStyle: { color: '#FFF' } }
         }}
