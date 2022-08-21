@@ -15,4 +15,4 @@ PostureML has room for technical improvements. This includes additional classifi
 
 [Devpost](https://devpost.com/software/postureai)
 
-[Website Link](https://postureml.herokuapp.com/) (OOS - out of credits :(  )
+[Website Link](https://postureml.herokuapp.com/) N/A - Out of Azure credits :(  
